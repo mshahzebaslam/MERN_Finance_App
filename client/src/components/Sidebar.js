@@ -23,7 +23,7 @@ const Sidebar = () => {
   return (
     <div className="w-64 h-screen bg-black text-white flex flex-col justify-between">
       <div>
-        <div className="text-2xl font-bold p-6">FINEbank.IO</div>
+        <div className="text-2xl font-bold p-6">Smart Spend</div>
         <nav className="flex flex-col gap-2 px-4">
           <NavLink
             to="/"
