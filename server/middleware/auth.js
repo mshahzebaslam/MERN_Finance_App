@@ -13,7 +13,7 @@ export const authenticate = async (req, res, next) => {
       
       const user = await User.findOne({
           _id: decoded.id,
-          'tokens.token': token // Check if token exists in user's tokens
+          'tokens.token': token 
       });
 
       if (!user) {
