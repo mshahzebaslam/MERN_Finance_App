@@ -1,6 +1,5 @@
 import express from 'express';
-import Bill from '../models/bill.js';
-
+import Bill from '../models/Bill.js';
 import { 
   createBill, 
   getBills, 

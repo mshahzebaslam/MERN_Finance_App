@@ -6,7 +6,7 @@ const Transactions = () => {
   const [transactions, setTransactions] = useState([]);
   const [form, setForm] = useState({ description: "", amount: "" });
 
-  // 1. Load Transactions
+
   const getTransactions = async () => {
     const token = localStorage.getItem("token");
     try {
@@ -15,7 +15,7 @@ const Transactions = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      setTransactions(res.data.transactions || []); // <- update list
+      setTransactions(res.data.transactions || []);
     } catch (error) {
       console.error("Error fetching transactions", error.response?.data || error.message);
     }
@@ -25,12 +25,10 @@ const Transactions = () => {
     getTransactions();
   }, []);
 
-  // 2. Handle Input
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // 3. Add Transaction
   const addTransaction = async () => {
     const token = localStorage.getItem("token");
     try {
@@ -58,7 +56,6 @@ const Transactions = () => {
     }
   };
 
-  // 4. Delete Transaction
   const removeTransaction = async (index) => {
     const token = localStorage.getItem("token");
     const transactionId = transactions[index]._id;

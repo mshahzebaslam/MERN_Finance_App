@@ -179,7 +179,7 @@ const Overview = () => {
                   <ArrowUpRight size={16} />
                 </div>
                 <div className="mt-2 flex gap-1">
-                  {/* MasterCard logo simulation with circles */}
+                  
                   <div className="w-4 h-4 rounded-full bg-red-500"></div>
                   <div className="w-4 h-4 rounded-full bg-yellow-400 -ml-2"></div>
                 </div>

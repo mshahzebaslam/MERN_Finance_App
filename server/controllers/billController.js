@@ -57,7 +57,6 @@ export const deleteBill = async (req, res) => {
   try {
     const bill = req.resource;
     
-    // Check if bill exists (though authorize middleware should handle this)
     if (!bill) {
       return res.status(404).json({
         success: false,
@@ -65,10 +64,8 @@ export const deleteBill = async (req, res) => {
       });
     }
 
-    // Perform deletion
     await bill.deleteOne();
 
-    // Return success response with deleted bill info
     res.status(200).json({
       success: true,
       message: 'Bill deleted successfully',
@@ -82,7 +79,6 @@ export const deleteBill = async (req, res) => {
   } catch (error) {
     console.error('Delete bill error:', error);
     
-    // Handle specific MongoDB errors
     if (error.name === 'CastError') {
       return res.status(400).json({
         success: false,
@@ -90,7 +86,6 @@ export const deleteBill = async (req, res) => {
       });
     }
 
-    // Generic error response
     res.status(500).json({
       success: false,
       message: 'Failed to delete bill',
