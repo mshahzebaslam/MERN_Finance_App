@@ -6,12 +6,16 @@ import {
 import "react-circular-progressbar/dist/styles.css";
 import { Pencil, ArrowUpRight, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import jsPDF from 'jspdf';
+import moment from 'moment';
+import autoTable from 'jspdf-autotable';
 
 const Overview = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigation = useNavigate();
+  const formatDateForFilename = () => moment().format('YYYY-MMM-DD');
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -40,6 +44,62 @@ const Overview = () => {
 
     fetchDashboardData();
   }, []);
+
+  const generatePDF = async () => {
+    
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch('http://localhost:5000/api/reports/export', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      const result = await response.json();
+  
+      if (!result.success) {
+        console.error('Report generation failed');
+        return;
+      }
+  
+      const doc = new jsPDF();
+      doc.setFontSize(18);
+      doc.text('Financial Report Summary', 14, 22);
+      doc.setFontSize(12);
+      doc.text(`Generated At: ${new Date(result.generatedAt).toLocaleString()}`, 14, 30);
+  
+      let yPos = 40;
+  
+      result.data.forEach((section) => {
+        const title = section.title;
+        const sectionData = section.data;
+  
+        if (sectionData.length > 0) {
+          doc.setFontSize(14);
+          doc.text(title, 14, yPos);
+          yPos += 6;
+  
+          const headers = Object.keys(sectionData[0]);
+          const rows = sectionData.map(item => headers.map(header => item[header]));
+  
+          autoTable(doc, {
+            startY: yPos,
+            head: [headers],
+            body: rows,
+            styles: { fontSize: 10 },
+            theme: 'striped',
+            margin: { left: 14, right: 14 }
+          });
+  
+          yPos = doc.lastAutoTable.finalY + 10;
+        }
+      });
+  
+      doc.save(`financial-summary_${formatDateForFilename()}.pdf`);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+    }
+  };
 
   const updateBalance = async () => {
     const token = localStorage.getItem("token");
@@ -99,7 +159,7 @@ const Overview = () => {
   const goalAchieved = firstGoal.currentAmount || 0;
   const progressPercent = goalTarget > 0 ? (goalAchieved / goalTarget) * 100 : 0;
 
- 
+
   const getCategoryIcon = (category) => {
     const icons = {
       housing: (
@@ -143,13 +203,21 @@ const Overview = () => {
     <div className="p-4 sm:p-6 md:p-8 text-gray-800 max-w-7xl mx-auto space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Welcome back, {username}!</h1>
-        <span className="text-sm text-gray-500">
-          {new Date().toLocaleDateString('en-US', {
-            weekday: 'long',
-            month: 'long',
-            day: 'numeric'
-          })}
-        </span>
+        <div className="flex items-center gap-4">
+          <button
+            className="text-sm bg-[#299d91] text-white px-3 py-1 rounded-md hover:bg-[#1f7a70] transition-colors"
+            onClick={generatePDF}
+          >
+            Download Report
+          </button>
+          <span className="text-sm text-gray-500">
+            {new Date().toLocaleDateString('en-US', {
+              weekday: 'long',
+              month: 'long',
+              day: 'numeric'
+            })}
+          </span>
+        </div>
       </div>
       {/* Top Summary Section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -161,8 +229,8 @@ const Overview = () => {
             {/* Top Section */}
             <div className="flex items-center justify-between mb-4">
               <p className="text-2xl font-bold">${balance.toLocaleString()}</p>
-              <Pencil size={16} className="text-gray-500 cursor-pointer" 
-              onClick={updateBalance}/>
+              <Pencil size={16} className="text-gray-500 cursor-pointer"
+                onClick={updateBalance} />
             </div>
 
             {/* Credit Card Summary */}
@@ -179,7 +247,7 @@ const Overview = () => {
                   <ArrowUpRight size={16} />
                 </div>
                 <div className="mt-2 flex gap-1">
-                  
+
                   <div className="w-4 h-4 rounded-full bg-red-500"></div>
                   <div className="w-4 h-4 rounded-full bg-yellow-400 -ml-2"></div>
                 </div>
@@ -195,7 +263,7 @@ const Overview = () => {
           <div className="p-6 bg-white rounded-2xl shadow-md h-[220px] flex flex-col justify-between">
             <div className="flex justify-between items-center mb-2">
               <p className="text-xl font-bold">${goalTarget.toLocaleString()}</p>
-            
+
             </div>
             <div className="text-sm text-gray-400 mb-2">
               {firstGoal.targetDate ? new Date(firstGoal.targetDate).toLocaleDateString('default', { month: 'long', year: 'numeric' }) : "May, 2023"}
@@ -321,7 +389,7 @@ const Overview = () => {
           <div className="flex items-center justify-between mb-2">
             <h2 className="font-semibold text-lg">Recent Transactions</h2>
             <button className="text-sm text-[#15615a] flex items-center gap-1 hover:underline"
-             onClick={() => navigation("/transactions")}>
+              onClick={() => navigation("/transactions")}>
               View All <Plus size={16} />
             </button>
           </div>

@@ -7,8 +7,8 @@ import {
   TargetIcon,
   SettingsIcon,
   LogOutIcon,
+  BookOpenIcon
 } from "lucide-react";
-
 const Sidebar = () => {
   const navigate = useNavigate();
 
@@ -75,6 +75,19 @@ const Sidebar = () => {
           >
             <TargetIcon size={20} /> Goals
           </NavLink>
+
+          <NavLink
+  to="/articles"
+  className={({ isActive }) =>
+    `flex items-center gap-2 p-2 rounded ${
+      isActive
+        ? 'bg-[#15615a] text-white'
+        : 'text-gray-300 hover:bg-gray-800'
+    }`
+  }
+>
+  <BookOpenIcon size={20} /> Articles
+</NavLink>
           
         </nav>
       </div>

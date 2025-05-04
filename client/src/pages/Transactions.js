@@ -6,7 +6,6 @@ const Transactions = () => {
   const [transactions, setTransactions] = useState([]);
   const [form, setForm] = useState({ description: "", amount: "" });
 
-
   const getTransactions = async () => {
     const token = localStorage.getItem("token");
     try {
@@ -76,6 +75,23 @@ const Transactions = () => {
     }
   };
 
+  const downloadReport = () => {
+    const headers = ["Description", "Amount"];
+    const rows = transactions.map(t => [t.description, t.amount]);
+
+    let csvContent = "data:text/csv;charset=utf-8," 
+      + headers.join(",") + "\n"
+      + rows.map(e => e.join(",")).join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "transactions_report.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="p-4 sm:p-6 md:p-8 text-gray-800 max-w-7xl mx-auto">
       <h1 className="text-xl sm:text-2xl font-bold mb-6">Transactions</h1>
@@ -106,6 +122,15 @@ const Transactions = () => {
           </button>
         </div>
       </div>
+
+      {/* Download Report Button */}
+      <button
+        onClick={downloadReport}
+        className="text-white font-semibold rounded-lg px-4 py-3 transition-all mb-6"
+        style={{ background: "linear-gradient(135deg, #247f78, #2eb89d)" }}
+      >
+        Download Report
+      </button>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {transactions.map((transaction, index) => (

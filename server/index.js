@@ -8,7 +8,9 @@ import transactionRoutes from './routes/transactionRoutes.js';
 import billRoutes from './routes/billRoutes.js';
 import budgetRoutes from './routes/budgetRoutes.js';
 import goalRoutes from './routes/goalRoutes.js';
+import reportRoutes from './routes/reportRoutes.js';
 import dotenv from 'dotenv';
+
 
 dotenv.config();
 
@@ -33,9 +35,11 @@ mongoose.connect(process.env.MONGODB_URI)
 app.use('/api/users', userRoutes);
 app.use('/api/accounts', accountRoutes);
 app.use('/api/transactions', transactionRoutes);
+
 app.use('/api/bills', billRoutes);
 app.use('/api/budgets', budgetRoutes);
 app.use('/api/goals', goalRoutes);
+app.use('/api/reports', reportRoutes); 
 
 // Error handling middleware
 app.use((err, req, res, next) => {

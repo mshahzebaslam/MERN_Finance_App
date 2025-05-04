@@ -8,6 +8,7 @@ import Overview from "./pages/Overview";
 import Transactions from "./pages/Transactions";
 import Bills from "./pages/Bills";
 import Goals from "./pages/Goals";
+import Articles from "./pages/Articles";
 import Settings from "./pages/Settings";
 
 export default function App() {
@@ -41,6 +42,7 @@ export default function App() {
                 <Route path="/transactions" element={<Transactions />} />
                 <Route path="/bills" element={<Bills />} />
                 <Route path="/goals" element={<Goals />} />
+                <Route path="/articles" element={<Articles />} />
                 
               </Routes>
             </div>
